@@ -1,0 +1,6 @@
+# images.txt
+nginx:latest
+ubuntu:latest
+mysql:5.7
+redis:latest
+openjdk:latest
