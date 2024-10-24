@@ -25,18 +25,25 @@ jobs:
             echo "DOCKERHUB_TOKEN is not set"
           fi
 
+      # 添加此步骤来配置Docker允许不安全registry
+      - name: Configure Docker daemon
+        run: |
+          echo '{ "insecure-registries": ["119.23.251.91:5000"] }' | sudo tee /etc/docker/daemon.json
+          sudo service docker restart
+
       - name: Login to Docker Hub
-        uses: docker/login-action@v2  # 更新到v2版本
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to Private Registry
-        uses: docker/login-action@v2  # 更新到v2版本
+        uses: docker/login-action@v2
         with:
           registry: 119.23.251.91:5000
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
+          insecure: true  # 添加这行来允许不安全连接
 
       - name: Sync images
         run: |
