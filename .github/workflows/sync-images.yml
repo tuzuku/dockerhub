@@ -1,10 +1,9 @@
-# .github/workflows/sync-images.yml
 name: Sync Docker Images
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天运行
-  workflow_dispatch:      # 支持手动触发
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   sync:
@@ -13,14 +12,27 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
+      - name: Debug Secrets
+        run: |
+          if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
+            echo "DOCKERHUB_USERNAME is set"
+          else
+            echo "DOCKERHUB_USERNAME is not set"
+          fi
+          if [ -n "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+            echo "DOCKERHUB_TOKEN is set"
+          else
+            echo "DOCKERHUB_TOKEN is not set"
+          fi
+
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2  # 更新到v2版本
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to Private Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2  # 更新到v2版本
         with:
           registry: 119.23.251.91:5000
           username: ${{ secrets.REGISTRY_USERNAME }}
